@@ -9,23 +9,32 @@ pipeline {
             }
         }
 
-        stage('Verify Files') {
+        stage('Verify Project Files') {
             steps {
-                echo 'Checking project structure...'
+                echo 'Listing project structure...'
                 sh 'ls -la'
+                sh 'ls -la monitoring'
+                sh 'ls -la jenkins'
             }
         }
 
-        stage('Validate Monitoring Config') {
+        stage('Validate Prometheus Config') {
             steps {
-                echo 'Showing Prometheus config...'
+                echo 'Validating Prometheus config file...'
                 sh 'cat monitoring/prometheus.yml'
             }
         }
 
-        stage('Done') {
+        stage('Validate Jenkins Files') {
             steps {
-                echo 'Jenkins pipeline ran successfully.'
+                echo 'Showing Jenkins Docker Compose file...'
+                sh 'cat jenkins/docker-compose.yml'
+            }
+        }
+
+        stage('Pipeline Complete') {
+            steps {
+                echo 'Monitoring pipeline validation completed successfully.'
             }
         }
     }
