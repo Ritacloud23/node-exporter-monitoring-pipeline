@@ -1,4 +1,4 @@
-#  TaskFlow DevOps Project
+#  End-to-End DevOps Pipeline Project
 
 A full-stack DevOps and Cloud Engineering project that demonstrates how to provision infrastructure, automate CI/CD, deploy an application to Kubernetes, and implement monitoring with Prometheus and Grafana.
 
