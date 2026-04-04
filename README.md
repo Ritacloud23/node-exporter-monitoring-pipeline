@@ -317,22 +317,34 @@ readinessProbe:
 ## 📂 Project Structure
 
 ```bash
-terraform-jenkins-project/
-├── backend/
-├── frontend/
+devops-end-to-end-pipeline/
+├── .github/
+│   └── workflows/
+│       └── cicd.yml
+├── app/
+│   ├── backend/
+│   └── frontend/
+├── infra/
+│   └── terraform/
+│       ├── main.tf
+│       ├── provider.tf
+│       ├── outputs.tf
+│       ├── vpc.tf
+│       ├── security-group.tf
+│       └── elastic-ip.tf
 ├── jenkins/
+│   └── Jenkinsfile
 ├── k8s/
 │   ├── backend-deployment.yaml
 │   ├── backend-service.yaml
 │   ├── frontend-deployment.yaml
 │   └── frontend-service.yaml
 ├── monitoring/
-├── Jenkinsfile
-├── main.tf
-├── outputs.tf
-├── provider.tf
-├── Security Group.tf
-├── Elastic IP.tf
+│   └── ...
+├── docs/
+│   └── screenshots/
+├── .gitignore
+├── docker-compose.yml
 └── README.md
 ```
 

@@ -11,3 +11,11 @@ override.tf.json
 # OS / editor
 .vscode/
 .DS_Store
+
+.terraform/
+terraform/.terraform/
+terraform/providers/
+*.tfstate
+*.tfstate.*
+crash.log
+logs.text
