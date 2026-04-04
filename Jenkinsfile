@@ -4,65 +4,51 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Pulling code from repository...'
                 checkout scm
             }
         }
 
-        stage('Verify Project Files') {
+        stage('Validate Files') {
             steps {
-                echo 'Listing project structure...'
+                echo 'Checking project structure...'
                 sh 'ls -la'
-                sh 'ls -la backend'
-                sh 'ls -la frontend'
-                sh 'ls -la monitoring'
-                sh 'ls -la jenkins'
                 sh 'ls -la k8s'
             }
         }
 
-        stage('Validate Prometheus Config') {
+        stage('Build Backend Image') {
             steps {
-                echo 'Validating Prometheus config file...'
-                sh 'cat monitoring/prometheus.yml'
+                echo 'Building backend image...'
+                sh 'docker build -t backend-app:latest ./backend'
             }
         }
 
-        stage('Validate Jenkins Files') {
+        stage('Build Frontend Image') {
             steps {
-                echo 'Showing Jenkins Docker Compose file...'
-                sh 'cat jenkins/docker-compose.yml'
+                echo 'Building frontend image...'
+                sh 'docker build -t frontend-app:latest ./frontend'
             }
         }
 
-        stage('Validate Backend Files') {
+        stage('Load Images to Minikube') {
             steps {
-                echo 'Checking backend files...'
-                sh 'ls -la backend'
+                echo 'Loading images into Minikube...'
+                sh 'minikube image load backend-app:latest'
+                sh 'minikube image load frontend-app:latest'
             }
         }
 
-        stage('Validate Frontend Files') {
+        stage('Deploy to Kubernetes') {
             steps {
-                echo 'Checking frontend files...'
-                sh 'ls -la frontend'
+                echo 'Deploying to Kubernetes...'
+                sh 'kubectl apply -f k8s/'
             }
         }
 
-        stage('Validate Kubernetes Files') {
+        stage('Verify Deployment') {
             steps {
-                echo 'Checking Kubernetes manifests...'
-                sh 'ls -la k8s'
-                sh 'cat k8s/backend-deployment.yaml'
-                sh 'cat k8s/backend-service.yaml'
-                sh 'cat k8s/frontend-deployment.yaml'
-                sh 'cat k8s/frontend-service.yaml'
-            }
-        }
-
-        stage('Pipeline Complete') {
-            steps {
-                echo 'Monitoring pipeline validation completed successfully.'
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
