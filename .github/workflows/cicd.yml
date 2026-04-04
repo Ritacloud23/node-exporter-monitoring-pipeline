@@ -1,0 +1,65 @@
+name: TaskFlow CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check project structure
+        run: |
+          ls -la
+          ls -la backend
+          ls -la frontend
+          ls -la k8s || true
+          ls -la monitoring || true
+          ls -la jenkins || true
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Validate backend app starts
+        working-directory: backend
+        run: |
+          node --check server.js
+
+      - name: Validate Kubernetes manifests exist
+        run: |
+          test -f k8s/backend-deployment.yaml
+          test -f k8s/backend-service.yaml
+          test -f k8s/frontend-deployment.yaml
+          test -f k8s/frontend-service.yaml
+
+      - name: Validate Terraform formatting
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Build backend Docker image
+        run: docker build -t taskflow-backend ./backend
+
+      - name: Build frontend Docker image
+        run: docker build -t taskflow-frontend ./frontend
